@@ -1,0 +1,8 @@
+<p>Use the form below to update the dealer locator with new data.  A database backup will be created before your upload is processed in the event that the import is interrupted.</p>
+<form action="/wheretobuy/import/" method="post" enctype="multipart/form-data" >
+	{% csrf_token %}
+	<input type="file" id="export" name="export">
+	<input type="submit" value="upload">
+</form>
+
+<p>Processing a new export will take about 20-30 minutes.  You will get a success message if your upload was processed successfully.</p>

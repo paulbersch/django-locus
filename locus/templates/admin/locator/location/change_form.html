@@ -1,0 +1,79 @@
+{% extends "admin/change_form.html" %}
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+django.jQuery(document).ready( function() {
+	{% if original.latitude and original.longitude %}
+	var latlng = new google.maps.LatLng({{ original.latitude }}, {{ original.longitude }});
+	var myOptions = {
+		zoom: 16,
+		center: latlng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+
+	{% else %}
+	var latlng = new google.maps.LatLng(37.0625,-95.677068);
+	var myOptions = {
+		zoom: 3,
+		center: latlng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+
+	{% endif %}
+
+	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	var marker = new google.maps.Marker({'map': map, 'position': latlng, 'clickable': false});
+	var geocoder = new google.maps.Geocoder();
+	google.maps.event.addListener(map, 'click', function(event) {
+			//marker.setMap(null);
+			marker.setPosition(event.latLng);
+			//marker.setMap(map);
+	});
+	var mapdiv = django.jQuery("#mapdiv").detach();
+	django.jQuery(".grp-row.latitude").before(mapdiv);
+	django.jQuery("#go_search").bind('click', function() {
+		geocoder.geocode({ 'address': django.jQuery("#address_search").val() }, function(result, geocoderstatus) {
+			console.log(result[0].geometry);
+			map.setCenter(result[0].geometry.location);
+			marker.setPosition(result[0].geometry.location);
+			map.setZoom(13);
+		});
+		return false;
+	});
+	django.jQuery("#use_location").bind('click', function() {
+		var position = marker.getPosition();
+		django.jQuery("#id_latitude").val(truncate(position.lat(), 10));
+		django.jQuery("#id_longitude").val(truncate(position.lng(), 10));
+		django.jQuery("#id_override_lat_long").attr('checked', true);
+		return false;
+	});
+});
+function truncate(number,decimal_places) {
+	number = String(number);
+	if(number.indexOf('.') == -1) {
+		return number;
+	}
+	return number.substr(0, number.indexOf('.')) + number.substr(number.indexOf('.'), decimal_places + 1);
+}
+
+
+</script>
+{% endblock %}
+
+{% block object-tools %}
+{{ block.super }}
+<div class="grp-row" id="mapdiv">
+    <div class="l-2c-fluid l-d-4">
+        <div class="c-1"></div>
+        <div class="c-2">
+            <div id="map_canvas" style="width: 700px; height: 400px;"></div>
+            <p>Click the map to position the marker, then click "Use Location" to copy the coordinates of the marker into the latitude / longitude fields.</p>
+            <p>If you click "Clear Location" and save the model, the locator will attempt to geocode based on the dealer's address.</p>
+            <input type="text" id="address_search" value="Enter an address and press 'Search' to re-focus the map." style="width: 500px;"onfocus="if (this.value == 'Enter an address and press \'Search\' to re-focus the map.') this.value = '';"><button class="grp-button" style="width: auto;" id="go_search">Search</button>
+            <button id="use_location" style="width: auto;"  class="grp-button">Use Location</button>
+            <button id="clear_location" style="width: auto;"  class="grp-button" onclick="django.jQuery('#id_longitude, #id_latitude').val('0'); django.jQuery('#id_override_lat_long').attr('checked',false); return false;">Clear Location</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

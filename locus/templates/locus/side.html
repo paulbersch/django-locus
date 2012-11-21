@@ -1,0 +1,135 @@
+{% comment %}
+{% endcomment %}
+<div id="find-zip-side" style="display: none;">
+	<h6>Find a Dealer</h6>
+	<p>Enter ZIP code to find the nearest dealer carrying <strong>{{ productname }}</strong></p>
+		<div id="locator-form">
+			<input type="text" id="zipcode" class="formtext" value="Enter ZIP Code" name="zipcode" onclick="if(this.value == 'Enter ZIP Code') { this.value = '' }"/>
+			<button class="common-button" onclick="newAddress($('#locator-form #zipcode').val());"><strong>Show Dealers</strong></button>
+		</div>
+	<div class="clear"></div>
+</div>
+
+<div id="find-dealer-side" style="display: none;"> 
+	<h6>Find a Dealer</h6> 
+	<p>Nearest dealer carrying <strong>{{ productname }}</strong> within 25 miles of: <span id="sidebarzipcode">--</span></p> 
+	<p><strong><a href="#" onclick="$('#find-zip-side').show(); $('#find-dealer-side').hide();">Change Zip</a>  or  <a href="/find-a-dealer/?filters={{filters}}&promotions={{promotions}}">View all</a></strong></p> 
+	
+	<table cellspacing="0"> 
+		<tr> 
+			<th>Dealer /<br />Contact Info</th> 
+			<th class="distance">Distance</th> 
+		</tr> 
+	</table> 
+	<div id="expand" class="view-more"> 
+		<a href="#" onclick="return toggleList();">View more dealers</a> 
+	</div> 
+	<div id="collapse" class="view-less" style="display: none;"> 
+		<a href="#" onclick="return toggleList();">View less dealers</a> 
+	</div> 
+</div> 
+<script type="text/javascript" src="{{ LOCATOR_MEDIA_URL }}js/cookie.js"></script>
+<script type="text/javascript">
+	function toggleList() {
+		$('div#find-dealer-side table tr').toggle().first().show();
+		$('#expand').toggle();
+		$('#collapse').toggle();
+		return false; 
+	}
+
+function newAddress(address) {
+	eraseCookie('latitude');
+	eraseCookie('longitude');
+	eraseCookie('address');
+	createCookie('address', address, 7);
+	sidebarList(tag_filters, tag_promotions);
+}
+function sidebarList(filters, promotions) {
+	var latitude = readCookie('latitude');
+	var longitude = readCookie('longitude');
+
+	if(!latitude || !longitude ) {
+		// we need to figure out where you are.
+		// first check for a cookie
+		eraseCookie('latitude');
+		eraseCookie('longitude');
+		alert('whatwhat');
+		if (decodeURIComponent(readCookie('address')) != 'null') {
+			google.load("maps","3", {other_params:"sensor=false", callback:function() {
+					var geocoder = new google.maps.Geocoder();
+					var address = decodeURIComponent(readCookie('address'));
+					geocoder.geocode({address: address}, function(results, status) {
+						if(status == google.maps.GeocoderStatus.OK) {
+							window.latlng = results[0].geometry.location;
+							createCookie('latitude', String(window.latlng.lat()), 7)
+							createCookie('longitude', String(window.latlng.lng()), 7)
+							sidebarList(tag_filters, tag_promotions);
+							return true;
+						} else {
+							eraseCookie('address');
+							sidebarList(tag_filters, tag_promotions);
+							return true;
+						}
+					});
+				}
+			});
+			return true;
+		}
+		// next try looking up their ip address
+		$.get('/find-a-dealer/geoip/?'+ new Date().getTime(), function (data) {  
+			if (data != 'false') {
+						$('#sidebarzipcode').html(decodeURIComponent(readCookie('address')));
+						sidebarList(tag_filters, tag_promotions);
+						return true;
+			} else {
+				$('#find-dealer-side').hide();
+				$('#find-zip-side').show();
+				return true;
+			}
+			});
+		
+	} else {
+		alert('hurr');
+		$('div#find-dealer-side table').html('');
+		$.getJSON('{{ LOCATOR_ROOT }}nearby/'+latitude+'/'+longitude+'/25/?filters='+filters+'&promotions='+promotions+'&limit=5', function(dealerData) {
+			if(dealerData.length == 0) {
+				var row = document.createElement('tr');
+				$(row).html('No dealers selling {{ productname }} were found within 25 miles of your location.');
+				$('div#find-dealer-side table').append(row);
+			}
+			if(dealerData.length < 2) {
+				$('.view-more').hide();
+			} else {
+				$('#expand').show();
+			}
+
+			$(dealerData).each( function(dealer) {
+				var row = document.createElement('tr');
+				if(dealer > 0) {
+					row.style.display = 'none';
+				}
+				var address = document.createElement('td');
+				$(address).addClass('dealer-address').html('<a href="/find-a-dealer/">'+this.fields.name + '</a></strong><br />' + this.fields.street_line1 + '<br />' + this.fields.city + ', ' + this.fields.state + ' ' + this.fields.zip + '<br />' + this.fields.phone + '<br /><a href="#" onclick=\'goToDirections("' + this.fields.street_line1 + ' ' + this.fields.city + ', ' + this.fields.state + ' ' + this.fields.zip + '");\'>Get Directions</a>');
+				var distance = document.createElement('td');
+				$(distance).addClass('dealer-distance').html(this.fields.distance + " miles");
+				$(row).append(address).append(distance);
+				$('div#find-dealer-side table').append(row);
+			});
+			$('#find-dealer-side').show();
+			$('#find-zip-side').hide();
+			$('#sidebarzipcode').html(decodeURIComponent(readCookie('address')));
+		});
+	}
+}
+
+function goToDirections(destination) {
+	var google_url = 'http://maps.google.com/maps?f=d&source=s_d&saddr=' + escape(decodeURIComponent(readCookie('address'))) + '&daddr=' + escape(destination);
+	window.open(google_url);
+	return true;
+}
+
+
+var tag_filters = '{{ filters }}';
+var tag_promotions = '{{ promotions }}';
+window.onload = function() { sidebarList(tag_filters, tag_promotions); }
+</script>

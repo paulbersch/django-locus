@@ -1,0 +1,6 @@
+static/
+*.pyc
+*.swp
+._*
+.DS_Store
+CACHE
