@@ -4,3 +4,4 @@ static/
 ._*
 .DS_Store
 CACHE
+local_settings.py
