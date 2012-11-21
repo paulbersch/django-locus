@@ -1,0 +1,53 @@
+	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript">
+function writeToResults(latlng, pk, address) {
+	$('#results').append("<li>" + latlng + " " + pk + " " + address + "</li>");
+	$.get('/wheretobuy/dealers/geocode/', { latitude: latlng.lat(), longitude: latlng.lng(), id: pk });
+}
+function initialize() {
+	$.getJSON('/wheretobuy/dealers/{{ updatewhich }}/all', {}, recursiveLookup);
+}
+
+function recursiveLookup(data) {
+	var dealer = data.pop();
+	var address = dealer.fields.street_line1 + " " + dealer.fields.city + " " + dealer.fields.zip;
+	// since this is a closure, the variable state is frozen when the anonymous function is defined
+	setTimeout(function() { LatLngFromAddress(address, function(location) { writeToResults(location, dealer.pk, address) }); if(data.length > 0) { recursiveLookup(data); } }, 1200);
+}
+</script>
+	<!--
+	<script type="text/javascript">
+
+		function initialize() {
+			getFilterValues();
+			// runs after the page loads
+			myOptions = {
+				zoom: 8,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+
+			showMap();
+
+			determineLocation(function(latlng) { newSearchLocation(latlng); });
+
+			// re-search when a new radius is selected
+			$('#ranges input').bind('click', function() {
+				if(window.address) {
+					window.radius = this.value;
+					newSearchLocation();
+				}
+			});
+
+			// check the appropriate radius
+			$('#search-range-' + String(window.radius)).attr('checked','checked');
+		}
+
+	</script>
+	-->
+	<script type="text/javascript" src="{{ LOCATOR_MEDIA_URL }}js/google.js"></script>
+	<script type="text/javascript" src="{{ LOCATOR_ROOT }}js/maps.js"></script>
+	<script type="text/javascript" src="{{ LOCATOR_MEDIA_URL }}js/cookie.js"></script>
+
+<div id="map_canvas"></div>
+<ul id="results"></ul>
+
