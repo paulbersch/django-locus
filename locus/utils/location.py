@@ -1,5 +1,4 @@
 import math
-import MySQLdb
 import GeoIP
 
 nauticalMilePerLat = 60.00721

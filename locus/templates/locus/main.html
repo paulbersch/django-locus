@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script data-main="/static/locus/js/main.js" src="/static/locus/js/require.js"></script>
+        <style type="text/css">
+            td {
+               border: 1px solid black; 
+            }
+        </style>
+    </head>
+    <body>
+        <div id="locator-anchor">
+        </div>
+        <!-- templates -->
+        <script type="text/template" id="-tmpl-locations-locator">
+            <div id="map-anchor">
+            </div>
+        </script>
+
+        <script type="text/template" id="-tmpl-locations-map">
+            <div id="map_canvas" style="width: 700px; height: 400px;"></div>
+            <div id="list-anchor"></div>
+        </script>
+
+        <script type="text/template" id="-tmpl-locations-list">
+            <h2>Search Results</h2>
+            <p><span class="locations-count">--</span> Service Centers were found within <span class="locations-search-radius">--</span> of <span class="locations-search-address">--</span></p>
+            <table id="locations-table">
+                <thead>
+                    <tr>
+                        <th>Distance</th>
+                        <th>Location</th>
+                        <th>Phone</th>
+                        <th>Hours</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </script>
+
+        <script type="text/template" id="-tmpl-locations-list-item">
+            <tr>
+                <td><%= '1' %> miles</td>
+                <td>
+                    <%= addr1 %><br />
+                    <%= addr2 %><% if(addr2) { %><br /><% } %>
+                    <%= city %>, <%= state %> <%= zip %>
+                    <a href="javascript:void(0);">Directions</a>
+                </td>
+                <td><%= phone %></td>
+                <td><%= hours %></td>
+                <td><%= notes %></td>
+            </tr>
+        </script>
+
+        <script type="text/template" id="-tmpl-locations-infowindow">
+            <div>
+                <%= addr1 %><br />
+                <%= addr2 %><% if(addr2) { %><br /><% } %>
+                <%= city %>, <%= state %> <%= zip %>
+                <a href="javascript:void(0);">Directions</a>
+            </div>
+        </script>
+        <!-- end templates -->
+    </body>
+</html>

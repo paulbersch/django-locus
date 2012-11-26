@@ -42,7 +42,7 @@ class Location(models.Model):
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     zip = models.CharField(max_length=255)
-    country = models.CharField(max_length=100)
+    country = models.CharField(max_length=100, blank=True)
 
     # contact information
     phone = models.CharField(max_length=50, blank=True, null=True)
