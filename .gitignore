@@ -5,3 +5,5 @@ static/
 .DS_Store
 CACHE
 local_settings.py
+sqlite.db
+virtualenv
