@@ -31,7 +31,7 @@ django.jQuery(document).ready( function() {
 			//marker.setMap(map);
 	});
 	var mapdiv = django.jQuery("#mapdiv").detach();
-	django.jQuery(".grp-row.latitude").before(mapdiv);
+	django.jQuery(".grp-row.latitude, .form-row.field-latitude").before(mapdiv);
 	django.jQuery("#go_search").bind('click', function() {
 		geocoder.geocode({ 'address': django.jQuery("#address_search").val() }, function(result, geocoderstatus) {
 			console.log(result[0].geometry);
@@ -63,6 +63,7 @@ function truncate(number,decimal_places) {
 
 {% block object-tools %}
 {{ block.super }}
+{% comment %}
 <div class="grp-row" id="mapdiv">
     <div class="l-2c-fluid l-d-4">
         <div class="c-1"></div>
@@ -76,4 +77,19 @@ function truncate(number,decimal_places) {
         </div>
     </div>
 </div>
+{% endcomment %}
+    <div class="form-row field-map" id="mapdiv">
+    <div>
+        <label for="use_location">Map:</label>
+        <div style="float: left;">
+            <div id="map_canvas" style="width: 700px; height: 400px;"></div>
+            <p>Click the map to position the marker, then click "Use Location" to copy the coordinates of the marker into the latitude / longitude fields.</p>
+            <p>If you click "Clear Location" and save the model, the locator will attempt to geocode based on the dealer's address.</p>
+            <input type="text" id="address_search" value="Enter an address and press 'Search' to re-focus the map." style="width: 500px;"onfocus="if (this.value == 'Enter an address and press \'Search\' to re-focus the map.') this.value = '';"><button class="grp-button" style="width: auto;" id="go_search">Search</button>
+            <button id="use_location" style="width: auto;"  class="grp-button">Use Location</button>
+            <button id="clear_location" style="width: auto;"  class="grp-button" onclick="django.jQuery('#id_longitude, #id_latitude').val('0'); django.jQuery('#id_override_lat_long').attr('checked',false); return false;">Clear Location</button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
