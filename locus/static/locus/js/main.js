@@ -45,7 +45,7 @@ require(["underscore", "backbone", "locations"], function(_, Backbone, Locations
             "search/:query/": "view"
         },
         home: function() {
-            var locator = new Locations.Views.Map({ el: document.getElementById('locator-anchor') });
+            var locator = new Locations.Views.Locator({ el: document.getElementById('locator-anchor') });
             locator.render();
         },
         search: function(hash, query) {

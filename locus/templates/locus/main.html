@@ -8,6 +8,31 @@
             td {
                border: 1px solid black; 
             }
+
+            #map-anchor {
+                width: 700px;
+                height: 400px;
+                display: block;
+            }
+
+            #map_canvas {
+                width: 100%;
+                height: 100%;
+            }
+
+            #loading {
+                position: relative;
+                z-index: 10000;
+                font-size: 2em;
+                line-height: 1.1em;
+                padding: 5px;
+                top: 50%;
+                left: 20%;
+                border: 1px solid #000;
+                background-color: #f5f5f5;
+                width: 140px;
+            }
+
         </style>
     </head>
     <body>
@@ -15,14 +40,14 @@
         </div>
         <!-- templates -->
         <script type="text/template" id="-tmpl-locations-locator">
-            <button id="asdf">Say</button>
             <div id="map-anchor">
             </div>
+            <div id="list-anchor"></div>
         </script>
 
         <script type="text/template" id="-tmpl-locations-map">
-            <div id="map_canvas" style="width: 700px; height: 400px;"></div>
-            <div id="list-anchor"></div>
+            <div id="loading">Loading...</div>
+            <div id="map_canvas"></div>
         </script>
 
         <script type="text/template" id="-tmpl-locations-list">
