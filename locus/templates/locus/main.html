@@ -13,6 +13,7 @@
                 width: 700px;
                 height: 400px;
                 display: block;
+                position: relative;
             }
 
             #map_canvas {
@@ -21,13 +22,14 @@
             }
 
             #loading {
-                position: relative;
+                display: none;
+                position: absolute;
                 z-index: 10000;
                 font-size: 2em;
                 line-height: 1.1em;
                 padding: 5px;
-                top: 50%;
-                left: 20%;
+                top: 40%;
+                left: 30%;
                 border: 1px solid #000;
                 background-color: #f5f5f5;
                 width: 140px;

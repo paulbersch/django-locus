@@ -48,7 +48,6 @@ define([
 
             this.list = new Locations.Views.LocationsList(this.map.map);
             this.list.setElement($('#list-anchor', this.el)[0]);
-            this.list.render();
         }
     });
 
@@ -61,12 +60,21 @@ define([
                 zoom: 9,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
+
+            $("body").on('loadingEnd', function() {
+                $("#loading").fadeOut("slow");
+            });
+
+            $("body").on('loadingStart', function() {
+                $("#loading").show();
+            });
         },
         events: {
         },
         render: function() {
             this.el.innerHTML = templates.map();
             this.map = new google.maps.Map($("#map_canvas", this.el)[0], this.mapOptions);
+            $("body").trigger('loadingStart');
 
         }
     });
@@ -79,22 +87,24 @@ define([
 
             this.map = map;
 
-            this.parameters = {};
+            this.parameters = { bounds: "0,0,0,0"};
+
+            google.maps.event.addListenerOnce(map, 'idle', _.bind(function() {
+                this.collection = new Locations.List();
+                this.collection.bind('reset', this.populateList, this);
+                this.render();
+            }, this));
 
             google.maps.event.addListener(map, 'idle', _.bind(function() {
+                $("body").trigger("loadingStart");
                 this.parameters['bounds'] = this.map.getBounds().toUrlValue();
                 this.collection.fetch({ data: this.parameters});
             }, this));
-
-            var bounds = map.getBounds();
-
 
             this.infoWindow = new google.maps.InfoWindow({
                 disableAutoPan: false
             });
 
-            this.collection = new Locations.List();
-            this.collection.bind('reset', this.populateList, this);
         },
         events: {
             'click a.next': "next",
@@ -102,8 +112,6 @@ define([
         },
         render: function() {
             this.el.innerHTML = templates.list();
-
-            this.collection.fetch({ data: this.parameters });
         },
         populateList: function() {
             $('.locations-total', this.el).html(this.collection.meta.total_count);
@@ -151,6 +159,7 @@ define([
             _.each(markers, function(marker) {
                 marker.setMap(this.map);
             }, this);
+            $("body").trigger("loadingEnd");
 
         },
         next: function() {
