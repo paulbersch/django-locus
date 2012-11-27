@@ -15,6 +15,7 @@
         </div>
         <!-- templates -->
         <script type="text/template" id="-tmpl-locations-locator">
+            <button id="asdf">Say</button>
             <div id="map-anchor">
             </div>
         </script>
@@ -27,6 +28,7 @@
         <script type="text/template" id="-tmpl-locations-list">
             <h2>Search Results</h2>
             <p><span class="locations-count">--</span> Service Centers were found within <span class="locations-search-radius">--</span> of <span class="locations-search-address">--</span></p>
+            <p><a href="#" class="prev">Prev</a> | <a href="javascript:void(0);" class="next">Next</a></p>
             <table id="locations-table">
                 <thead>
                     <tr>
@@ -46,6 +48,7 @@
             <tr>
                 <td><%= '1' %> miles</td>
                 <td>
+                    <%= name %><br />
                     <%= addr1 %><br />
                     <%= addr2 %><% if(addr2) { %><br /><% } %>
                     <%= city %>, <%= state %> <%= zip %>

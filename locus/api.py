@@ -29,6 +29,7 @@ class LocationResource(ModelResource):
     class Meta:
         queryset = Location.objects.all()
         resource_name = 'location'
+        limit = 100
         authorization = ReadOnlyAuthorization()
 
     def build_filters(self, filters=None):
