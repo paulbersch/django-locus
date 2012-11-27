@@ -97,6 +97,7 @@ define([
 
             google.maps.event.addListener(map, 'idle', _.bind(function() {
                 $("body").trigger("loadingStart");
+                this.collection.url = urlRoot; // clears out pagination
                 this.parameters['bounds'] = this.map.getBounds().toUrlValue();
                 this.collection.fetch({ data: this.parameters});
             }, this));
