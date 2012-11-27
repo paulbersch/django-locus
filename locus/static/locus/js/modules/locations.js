@@ -39,7 +39,6 @@ define([
             templates.locator = _.template($('#-tmpl-locations-locator').html());
         },
         events: {
-            'click #asdf': "say"
         },
         render: function() {
             this.el.innerHTML = templates.locator();
@@ -47,11 +46,9 @@ define([
             this.map = new Locations.Views.Map({ el: $('#map-anchor', this.el)[0] });
             this.map.render();
 
-            this.list = new Locations.Views.LocationsList({ el: $('#list-anchor', this.map.el)[0] });
+            this.list = new Locations.Views.LocationsList(this.map.map);
+            this.list.setElement($('#list-anchor', this.el)[0]);
             this.list.render();
-        },
-        say: function() {
-            alert('hi');
         }
     });
 
@@ -71,9 +68,6 @@ define([
             this.el.innerHTML = templates.map();
             this.map = new google.maps.Map($("#map_canvas", this.el)[0], this.mapOptions);
 
-            this.list = new Locations.Views.LocationsList(this.map);
-            this.list.setElement($('#list-anchor', this.el)[0]);
-            this.list.render();
         }
     });
 
