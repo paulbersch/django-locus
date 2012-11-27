@@ -7,3 +7,4 @@ CACHE
 local_settings.py
 sqlite.db
 virtualenv
+!locus/static/
