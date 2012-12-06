@@ -4,8 +4,23 @@ from random import choice
 
 """ just a dirty script for importing csv location data from http://www.poi-factory.com/ for testing """
 
+categories = [
+    ('Trains','trains'),
+    ('Planes','planes'),
+    ('Brains','brains'),
+]
+for category in categories:
+    c = Category()
+    c.name = category[0]
+    c.shortname = category[1]
+    c.save()
+
 categories = list(Category.objects.all())
-dataset = DataSet.objects.get(id=1)
+
+dataset = DataSet()
+dataset.name = "Wal-Mart"
+dataset.shortname = "walmart"
+dataset.save()
 
 with open('walmart.csv','r') as csvfile:
     reader = csv.reader(csvfile, delimiter=',', quotechar='"')

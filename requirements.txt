@@ -1,5 +1,4 @@
 Django==1.4.2
-GeoIP-Python==1.2.7
 PIL==1.1.7
 django-extensions==1.0.1
 django-tastypie==0.9.11
