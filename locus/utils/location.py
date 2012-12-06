@@ -1,5 +1,6 @@
 import math
-import GeoIP
+# add back later
+# import GeoIP
 
 nauticalMilePerLat = 60.00721
 nauticalMilePerLongitude = 60.10793
@@ -34,7 +35,12 @@ def milesBox( lat, lon, radius ):
 
 	return ( lat - latRange, lon - lonRange, lat + latRange, lon + lonRange )
 
+
 def revLookup(ip):
+    return False
+
+"""
 	gi = GeoIP.open("/usr/local/share/GeoIP/GeoLiteCity.dat",GeoIP.GEOIP_STANDARD)
 
 	return gi.record_by_addr(ip)
+"""

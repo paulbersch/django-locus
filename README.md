@@ -19,12 +19,13 @@ Clone the repository, create a virtualenv for the project, and install the requi
     pip install -r requirements.txt
 
 Set up the database and create an inital user for the admin.
+
     cd example
-    ./manage.py syncdb
+    python manage.py syncdb
 
 Next you'll want to install the test data.  First open a shell_plus, which will take care of setting up your Django environment.
 
-    ./manage.py shell_plus
+    python manage.py shell_plus
     
 From the shell, import the csv import script, which will parse the CSV file and load the data into Django models.
 
@@ -32,4 +33,4 @@ From the shell, import the csv import script, which will parse the CSV file and 
 
 Finally, run the Django development server.
 
-    ./manage.py runserver
+    python manage.py runserver
