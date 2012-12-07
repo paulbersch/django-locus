@@ -5,6 +5,8 @@ A Django store locator with a REST API and a backbone.js frontend.  Maps provide
 
 Still a work in progress: right now it puts pins on a map and shows locations below.
 
+You can view a running example here: http://oc.tl:8000/locator/walmart/ or follow the instructions below to set up your own test version.
+
 Installation
 ------------
 
