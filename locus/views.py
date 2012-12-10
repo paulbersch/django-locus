@@ -20,7 +20,7 @@ import subprocess, sys
 
 def locator(request, dataset):
 	# override main_custom to allow you to extend the main template
-	return render_to_response(["locus/main_custom.html","locus/main.html"], {}, context_instance = RequestContext(request))
+	return render_to_response(["locus/main_custom.html","locus/main.html"], { 'categories': Category.objects.all() }, context_instance = RequestContext(request))
 
 def locations(request, how, info):
 	locations = ''
