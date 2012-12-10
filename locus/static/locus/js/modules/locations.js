@@ -4,8 +4,7 @@ define([
     'underscore',
     'backbone',
     'paginator',
-    'URI'
-], function(_, Backbone, Paginator, URI) {
+], function(_, Backbone, Paginator) {
     var Locations = {};
 
     var urlRoot = "../locations/v1/location/";
@@ -72,9 +71,9 @@ define([
         events: {
         },
         render: function() {
+            $("body").trigger('loadingStart');
             this.el.innerHTML = templates.map();
             this.map = new google.maps.Map($("#map_canvas", this.el)[0], this.mapOptions);
-            $("body").trigger('loadingStart');
 
         }
     });
@@ -89,10 +88,20 @@ define([
 
             this.parameters = { bounds: "0,0,0,0"};
 
+            // see if there's an address in the querystring
+            var url = new URI();
+            var search = url.search(true);
+
             google.maps.event.addListenerOnce(map, 'idle', _.bind(function() {
                 this.collection = new Locations.List();
                 this.collection.bind('reset', this.populateList, this);
                 this.render();
+
+                if('address' in search) {
+                    this.location_search(search['address']);
+                    $('#locus-address-search input[name=address]').val(search['address']);
+                }
+
             }, this));
 
             google.maps.event.addListener(map, 'idle', _.bind(function() {
@@ -110,7 +119,8 @@ define([
         events: {
             'click a.next': "next",
             'click a.prev': "prev",
-            'submit form#locus-address-search': 'location_search'
+            'submit form#locus-address-search': 'search_form_submit',
+            'change form#categories input[type=checkbox]': 'filter_change'
         },
         render: function() {
             this.el.innerHTML = templates.list();
@@ -183,26 +193,76 @@ define([
                 console.log("no more previous");
             }
         },
-        add_filter: function(param) {
-            var url = URI(url);
-            this.parameters['param'] = True;
-            url = url.search(parameters)
+        filter_change: function(event) {
+            $("body").trigger("loadingStart");
+            var target = event.target;
+            var type = $(target).attr('data-type');
+
+            if (target.checked) {
+                this.add_filter(target.value, type);
+            } else {
+                this.remove_filter(target.value, type);
+            }
+        },
+        add_filter: function(id, type) {
+            var url = new URI(urlRoot);
+
+            if(!(type in this.parameters)) {
+                var list = [];
+            } else {
+                // turn the string parameter into a list
+                var list = this.parameters[type].split(',');
+            }
+
+            // add the new id
+            list.push(id);
+
+            // the api expects a comma-separated list of ids
+            // remove duplicates and re-join the list
+            this.parameters[type] = _.uniq(list).join(',');
+
+            // create a new query url
+            url = url.search(this.parameters)
             this.collection.url = url;
+
             this.collection.fetch({ data: this.parameters });
         },
-        remove_filter: function(param) {
-            var url = URI(url);
-            delete this.parameters['param'];
-            url = url.search(parameters);
+        remove_filter: function(id, type) {
+            var url = new URI(urlRoot);
+
+            if(!(type in this.parameters)) {
+                // we don't need to remove anything
+                $("body").trigger("loadingEnd");
+                return true;
+            }
+
+            // remove all occurances of id
+            var list = _.without(this.parameters[type].split(','), id);
+
+            if (list.length == 0) {
+                // empty lists may cause errors
+                delete this.parameters[type];
+            } else {
+                this.parameters[type] = list.join(',');
+            }
+
+            // create a new query url
+            url = url.search(this.parameters)
             this.collection.url = url;
+
             this.collection.fetch({ data: this.parameters });
         },
-        location_search: function(event) {
+        search_form_submit: function(event) {
             event.preventDefault();
+
             // grab the address from the form
             var form = event.target;
-            console.log(form);
             var address = $('input[name=address]', form).val();
+
+            // trigger the search
+            this.location_search(address);
+        },
+        location_search: function(address) {
             $('.locations-search-address').html("Distances relative to search: \"" + address + '"');
 
             var geocoder = new google.maps.Geocoder();
@@ -211,7 +271,7 @@ define([
                     var loc = results[0].geometry.location;
                     this.parameters['order_by'] = 'distance';
                     this.parameters['from'] = loc.lat() + ',' + loc.lng();
-                    this.map.setCenter(loc);
+                    this.map.panTo(loc);
                     if(typeof(this.location_marker) != 'undefined') {
                         this.location_marker.setMap();
                     }

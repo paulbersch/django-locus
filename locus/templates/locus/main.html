@@ -3,6 +3,7 @@
     <head>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script type="text/javascript" src="/static/locus/js/libs/URI.js"></script>
         <script data-main="/static/locus/js/main.js" src="/static/locus/js/require.js"></script>
         <style type="text/css">
             td {
@@ -57,6 +58,14 @@
                 <input type="text" name="address">
                 <input type="submit" value="Search">
             </form>
+            {% if categories %}
+            <p>Show me locations that:</p>
+            <form id="categories">
+                {% for category in categories %}
+                <input type="checkbox" value="{{ category.id }}" id="filter-{{ category.shortname }}" data-type="categories"><label for="filter-{{ category.shortname }}">{{ category.name }}</label>
+                {% endfor %}
+            </form>
+            {% endif %}
             <h2>Search Results</h2>
             <p><span class="locations-total">--</span> Service Centers were found.  <span class="locations-search-address"></span></p>
             <p>Page <span class="locations-page">--</span> of <span class="locations-total-pages">--</span> <a href="#" class="prev">Prev</a> | <a href="javascript:void(0);" class="next">Next</a></p>
@@ -84,6 +93,13 @@
                     <%= addr2 %><% if(addr2) { %><br /><% } %>
                     <%= city %>, <%= state %> <%= zip %>
                     <a href="javascript:void(0);">Directions</a>
+                    <% if (categories.length > 0) { %>
+                        <ul>
+                        <% _.each(categories, function(category) { %>
+                            <li><%= category.name %></li>
+                        <% }) %>
+                        </ul>
+                    <% } %>
                 </td>
                 <td><%= phone %></td>
                 <td><%= hours %></td>

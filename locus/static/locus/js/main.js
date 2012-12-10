@@ -17,7 +17,6 @@ require.config({
     backbone: "libs/backbone",
     paginator: "libs/backbone.paginator",
     locations: "modules/locations",
-    URI: "libs/URI"
   },
   shim: {
     underscore: {
@@ -30,9 +29,6 @@ require.config({
     paginator: {
       deps: ["backbone"],
       exports: "Paginator"
-    },
-    "URI": {
-        exports: "URI"
     }
   }
 });
