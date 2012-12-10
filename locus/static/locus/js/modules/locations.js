@@ -109,7 +109,8 @@ define([
         },
         events: {
             'click a.next': "next",
-            'click a.prev': "prev"
+            'click a.prev': "prev",
+            'submit form#locus-address-search': 'location_search'
         },
         render: function() {
             this.el.innerHTML = templates.list();
@@ -178,6 +179,50 @@ define([
             } else {
                 console.log("no more previous");
             }
+        },
+        add_filter: function(param) {
+            var url = URI(url);
+            this.parameters['param'] = True;
+            url = url.search(parameters)
+            this.collection.url = url;
+            this.collection.fetch({ data: this.parameters });
+        },
+        remove_filter: function(param) {
+            var url = URI(url);
+            delete this.parameters['param'];
+            url = url.search(parameters);
+            this.collection.url = url;
+            this.collection.fetch({ data: this.parameters });
+        },
+        location_search: function(event) {
+            event.preventDefault();
+            // grab the address from the form
+            var form = event.target;
+            console.log(form);
+            var address = $('input[name=address]', form).val();
+
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode( { 'address': address}, _.bind(function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    var loc = results[0].geometry.location;
+                    this.parameters['order_by'] = 'distance';
+                    this.parameters['from'] = loc.lat() + ',' + loc.lng();
+                    this.map.setCenter(loc);
+                    if(typeof(this.location_marker) != 'undefined') {
+                        this.location_marker.setMap();
+                    }
+                    this.location_marker = new google.maps.Marker({
+                        map: this.map,
+                        animation: google.maps.Animation.BOUNCE,
+                        position: loc
+                    });
+                } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            }, this));
+
+            //return false; // prevent default
+
         }
     });
 

@@ -59,6 +59,10 @@ class Location(models.Model):
     override_lat_long = models.BooleanField(default=False)
     override_lat_long.help_text = "Mark this field to prevent this location from auto-geotagging.  Useful if the geocoder service can't grok the address."
 
+    # just exists to hold the calculated distance value
+    # tastypie needs this to be part of the model to serialize it properly
+    distance = models.CharField(max_length=100, blank=True, null=True, editable=False)
+
     # categorization/filtering
     do_not_display = models.BooleanField(default=False, null=False)
     filtervalues = models.ManyToManyField('FilterValue', blank=True, null=True)
