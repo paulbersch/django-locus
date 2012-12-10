@@ -53,6 +53,10 @@
         </script>
 
         <script type="text/template" id="-tmpl-locations-list">
+            <form id="locus-address-search">
+                <input type="text" name="address">
+                <input type="submit" value="Search">
+            </form>
             <h2>Search Results</h2>
             <p><span class="locations-total">--</span> Service Centers were found within <span class="locations-search-radius">--</span> of <span class="locations-search-address">--</span></p>
             <p>Page <span class="locations-page">--</span> of <span class="locations-total-pages">--</span> <a href="#" class="prev">Prev</a> | <a href="javascript:void(0);" class="next">Next</a></p>
@@ -73,7 +77,7 @@
 
         <script type="text/template" id="-tmpl-locations-list-item">
             <tr>
-                <td><%= '1' %> miles</td>
+                <td><% if(distance) { %><%= Math.floor(distance) %> miles<% } %></td>
                 <td>
                     <%= name %><br />
                     <%= addr1 %><br />

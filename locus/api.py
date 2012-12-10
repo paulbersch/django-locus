@@ -2,6 +2,7 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import ReadOnlyAuthorization
 from tastypie import fields
 from models import Location, FilterValue, Category, DataSet
+from utils.location import calcDistance
 
 class FilterValueResource(ModelResource):
     class Meta:
@@ -49,12 +50,12 @@ class LocationResource(ModelResource):
         if 'bounds' in filters:
             swlat, swlng, nelat, nelng = [float(x) for x in filters['bounds'].split(',')]
 
-            lat_fudge = abs(nelat - swlat) * .02
-            lng_fudge = abs(swlng - nelng) * .02
+            lat_fudge = abs(nelat - swlat) * .1
+            lng_fudge = abs(swlng - nelng) * .1
 
             fudge = min([lat_fudge, lng_fudge]) # use the smaller fudge - otherwise the gutter gets distorted for very non-square maps
 
-            (swlat, swlng, nelat, nelng) = ((swlat - fudge), (swlng + fudge), (nelat - fudge), (nelng + fudge))
+            (swlat, swlng, nelat, nelng) = ((swlat + fudge), (swlng + fudge), (nelat - fudge), (nelng + fudge))
 
             custom_filters.update({
                 'latitude__gte': swlat,
@@ -71,3 +72,20 @@ class LocationResource(ModelResource):
     def apply_filters(self, request, applicable_filters):
         # the __in query can return duplicates, so filter those out with distinct()
         return super(LocationResource, self).apply_filters(request, applicable_filters).distinct()
+
+    def apply_sorting(self, obj_list, options=None):
+        if 'order_by' in options and 'from' in options and options['order_by'] == 'distance':
+            # inefficient, but in the absence of geodjango + postgres (which would scale much better), gets the job done
+            fromlat, fromlon = [float(x) for x in options['from'].split(',')]
+            for object in obj_list:
+                distance = calcDistance(object.latitude, object.longitude, fromlat, fromlon)
+                object.distance = distance
+            return sort_by_attr(obj_list, 'distance')
+        else:
+            return super(LocationResource, self).apply_sorting(obj_list, options)
+
+def sort_by_attr(seq,attr):
+	intermed = [ (getattr(seq[i],attr), i, seq[i]) for i in xrange(len(seq)) ]
+	intermed.sort()
+	return [ tup[-1] for tup in intermed ]
+
