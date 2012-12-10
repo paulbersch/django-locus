@@ -130,6 +130,9 @@ define([
 
             var locations_table = $('#locations-table tbody', this.el);
             $(locations_table).empty();
+            if(this.collection.isEmpty()) {
+                locations_table.html('<td colspan=5>No locations were found.  Drag and zoom the map to expand your search to a larger area.</td>');
+            }
 
             this.collection.each(function(loc, index) {
                 // create a map marker
@@ -200,6 +203,7 @@ define([
             var form = event.target;
             console.log(form);
             var address = $('input[name=address]', form).val();
+            $('.locations-search-address').html("Distances relative to search: \"" + address + '"');
 
             var geocoder = new google.maps.Geocoder();
             geocoder.geocode( { 'address': address}, _.bind(function(results, status) {

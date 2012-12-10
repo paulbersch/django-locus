@@ -55,7 +55,7 @@ class LocationResource(ModelResource):
 
             fudge = min([lat_fudge, lng_fudge]) # use the smaller fudge - otherwise the gutter gets distorted for very non-square maps
 
-            (swlat, swlng, nelat, nelng) = ((swlat + fudge), (swlng + fudge), (nelat - fudge), (nelng + fudge))
+            (swlat, swlng, nelat, nelng) = ((swlat + fudge), (swlng + fudge), (nelat - fudge), (nelng - fudge))
 
             custom_filters.update({
                 'latitude__gte': swlat,
