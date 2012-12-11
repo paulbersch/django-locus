@@ -50,13 +50,6 @@ class LocationResource(ModelResource):
         if 'bounds' in filters:
             swlat, swlng, nelat, nelng = [float(x) for x in filters['bounds'].split(',')]
 
-            lat_fudge = abs(nelat - swlat) * .1
-            lng_fudge = abs(swlng - nelng) * .1
-
-            fudge = min([lat_fudge, lng_fudge]) # use the smaller fudge - otherwise the gutter gets distorted for very non-square maps
-
-            (swlat, swlng, nelat, nelng) = ((swlat + fudge), (swlng + fudge), (nelat - fudge), (nelng - fudge))
-
             custom_filters.update({
                 'latitude__gte': swlat,
                 'latitude__lte': nelat,
