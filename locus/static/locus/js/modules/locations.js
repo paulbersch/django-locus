@@ -106,6 +106,15 @@ define([
 
             google.maps.event.addListener(map, 'idle', _.bind(function() {
                 $("body").trigger("loadingStart");
+
+                // check that the infowindow still belongs on the map
+                var bounds = this.map.getBounds();
+                var position = this.infoWindow.getPosition();
+                if (position && !bounds.contains(position)) {
+                    // the marker that this infowindow belongs to isn't visible anymore
+                    this.infoWindow.close();
+                }
+
                 this.collection.url = urlRoot; // clears out pagination
                 this.parameters['bounds'] = this.map.getBounds().toUrlValue();
                 this.collection.fetch({ data: this.parameters});
@@ -159,7 +168,9 @@ define([
                 var open_info_window = _.bind(function() {
                     this.infoWindow.close();
                     this.infoWindow.setContent(infowindow_content.html());
-                    this.infoWindow.open(this.map, marker);
+                    // don't anchor to a marker, as it may get redrawn
+                    this.infoWindow.setPosition(marker.getPosition());
+                    this.infoWindow.open(this.map);
                 }, this); // why does _.bind always feel like an antipattern...
 
                 google.maps.event.addListener(marker, 'click', open_info_window);
