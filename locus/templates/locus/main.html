@@ -39,25 +39,26 @@
         </style>
     </head>
     <body>
-        <div id="locator-anchor">
+        <div id="map-anchor">
+                <div id="controls-anchor">
+                    these are the controls.
+                </div>
+        </div>
+
+        <div id="list-anchor">
         </div>
         <!-- templates -->
-        <script type="text/template" id="-tmpl-locations-locator">
-            <div id="map-anchor">
-            </div>
-            <div id="list-anchor"></div>
-        </script>
-
         <script type="text/template" id="-tmpl-locations-map">
             <div id="loading">Loading...</div>
             <div id="map_canvas"></div>
         </script>
 
-        <script type="text/template" id="-tmpl-locations-list">
+        <script type="text/template" id="-tmpl-locations-controls">
             <form id="locus-address-search">
                 <input type="text" name="address">
                 <input type="submit" value="Search">
             </form>
+
             {% if categories %}
             <p>Show me locations that:</p>
             <form id="categories">
@@ -66,6 +67,9 @@
                 {% endfor %}
             </form>
             {% endif %}
+        </script>
+
+        <script type="text/template" id="-tmpl-locations-list">
             <h2>Search Results</h2>
             <p><span class="locations-total">--</span> Service Centers were found.  <span class="locations-search-address"></span></p>
             <p>Page <span class="locations-page">--</span> of <span class="locations-total-pages">--</span> <a href="#" class="prev">Prev</a> | <a href="javascript:void(0);" class="next">Next</a></p>
