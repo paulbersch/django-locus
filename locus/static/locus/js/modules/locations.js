@@ -33,23 +33,6 @@ define([
 
     var markers = [];
 
-    Locations.Views.Locator = Backbone.View.extend({
-        initialize: function() {
-            templates.locator = _.template($('#-tmpl-locations-locator').html());
-        },
-        events: {
-        },
-        render: function() {
-            this.el.innerHTML = templates.locator();
-
-            this.map = new Locations.Views.Map({ el: $('#map-anchor', this.el)[0] });
-            this.map.render();
-
-            this.list = new Locations.Views.LocationsList(this.map.map);
-            this.list.setElement($('#list-anchor', this.el)[0]);
-        }
-    });
-
     Locations.Views.Map = Backbone.View.extend({
         initialize: function() {
             templates.map = _.template($('#-tmpl-locations-map').html());
@@ -72,9 +55,30 @@ define([
         },
         render: function() {
             $("body").trigger('loadingStart');
-            this.el.innerHTML = templates.map();
+            this.$el.append(templates.map());
             this.map = new google.maps.Map($("#map_canvas", this.el)[0], this.mapOptions);
 
+        }
+    });
+
+    Locations.Views.Controls = Backbone.View.extend({
+        initialize: function(list) {
+            templates.controls = _.template($('#-tmpl-locations-controls').html());
+            this.list = list;
+        },
+        events: {
+            'submit form#locus-address-search': 'search_form_submit',
+            'change form#categories input[type=checkbox]': 'filter_change'
+        },
+        render: function() {
+            this.el.innerHTML = templates.controls();
+        },
+        // yuck :-(
+        search_form_submit: function(event) {
+            return this.list.search_form_submit(event);
+        },
+        filter_change: function(event) {
+            return this.list.filter_change(event);
         }
     });
 
@@ -128,8 +132,6 @@ define([
         events: {
             'click a.next': "next",
             'click a.prev': "prev",
-            'submit form#locus-address-search': 'search_form_submit',
-            'change form#categories input[type=checkbox]': 'filter_change'
         },
         render: function() {
             this.el.innerHTML = templates.list();

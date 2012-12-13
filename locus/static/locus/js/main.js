@@ -41,8 +41,15 @@ require(["underscore", "backbone", "locations"], function(_, Backbone, Locations
             "search/:query/": "view"
         },
         home: function() {
-            var locator = new Locations.Views.Locator({ el: document.getElementById('locator-anchor') });
-            locator.render();
+            var map = new Locations.Views.Map({ el: document.getElementById('map-anchor') });
+            map.render();
+
+            var list = new Locations.Views.LocationsList(map.map);
+            list.setElement(document.getElementById('list-anchor'));
+
+            var controls = new Locations.Views.Controls(list);
+            controls.setElement(document.getElementById('controls-anchor'));
+            controls.render();
         },
         search: function(hash, query) {
 
