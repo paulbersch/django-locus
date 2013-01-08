@@ -87,6 +87,8 @@ define([
             templates.list = _.template($('#-tmpl-locations-list').html());
             templates.list_item = _.template($('#-tmpl-locations-list-item').html());
             templates.infowindow_content = _.template($('#-tmpl-locations-infowindow').html());
+            templates.directions_url = _.template("http://maps.google.com/maps?f=d&source=s_d&saddr=<%= start %>&daddr=<%= destination %>");
+            templates.formatted_address = _.template("<%= addr1 %><% if(addr2) { %> <%= addr2 %><% } %> <%= city %>, <%= state %> <%= zip %> <%= country %>");
 
             this.map = map;
 
@@ -156,8 +158,17 @@ define([
             }
 
             this.collection.each(function(loc, index) {
+                var open_directions = function() {
+                        var start = escape($('#locus-address-search input[name=address]').val());
+                        var end = escape(templates.formatted_address(loc.attributes));
+                        window.open(templates.directions_url({ 'start': start, 'destination': end }));
+                        return false;
+                }
+
                 // create a map marker
                 var list_item = $(templates.list_item(loc.attributes));
+                $('.locations-directions', list_item).on('click', open_directions);
+
                 var infowindow_content = $(templates.infowindow_content(loc.attributes));
 
                 var marker = new google.maps.Marker({
@@ -169,7 +180,7 @@ define([
                 // for debug
                 var open_info_window = _.bind(function() {
                     this.infoWindow.close();
-                    this.infoWindow.setContent(infowindow_content.html());
+                    this.infoWindow.setContent($('.locations-address', list_item).clone(true, true).get(0));
                     // don't anchor to a marker, as it may get redrawn
                     this.infoWindow.setPosition(marker.getPosition());
                     this.infoWindow.open(this.map);

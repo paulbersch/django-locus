@@ -92,18 +92,20 @@
             <tr>
                 <td><% if(distance) { %><%= Math.floor(distance) %> miles<% } %></td>
                 <td>
-                    <%= name %><br />
-                    <%= addr1 %><br />
-                    <%= addr2 %><% if(addr2) { %><br /><% } %>
-                    <%= city %>, <%= state %> <%= zip %>
-                    <a href="javascript:void(0);">Directions</a>
-                    <% if (categories.length > 0) { %>
-                        <ul>
-                        <% _.each(categories, function(category) { %>
-                            <li><%= category.name %></li>
-                        <% }) %>
-                        </ul>
-                    <% } %>
+                    <div class="locations-address">
+                        <%= name %><br />
+                        <%= addr1 %><br />
+                        <%= addr2 %><% if(addr2) { %><br /><% } %>
+                        <%= city %>, <%= state %> <%= zip %>
+                        <a href="#" class="locations-directions">Directions</a>
+                        <% if (categories.length > 0) { %>
+                            <ul>
+                            <% _.each(categories, function(category) { %>
+                                <li><%= category.name %></li>
+                            <% }) %>
+                            </ul>
+                        <% } %>
+                    </div>
                 </td>
                 <td><%= phone %></td>
                 <td><%= hours %></td>
@@ -111,14 +113,6 @@
             </tr>
         </script>
 
-        <script type="text/template" id="-tmpl-locations-infowindow">
-            <div>
-                <%= addr1 %><br />
-                <%= addr2 %><% if(addr2) { %><br /><% } %>
-                <%= city %>, <%= state %> <%= zip %>
-                <a href="javascript:void(0);">Directions</a>
-            </div>
-        </script>
         <!-- end templates -->
     </body>
 </html>
