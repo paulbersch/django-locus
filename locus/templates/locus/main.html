@@ -92,7 +92,6 @@
             <tr>
                 <td><% if(distance) { %><%= Math.floor(distance) %> miles<% } %></td>
                 <td>
-<<<<<<< HEAD
                     <%= name %><br />
                     <%= addr1 %><br />
                     <%= addr2 %><% if(addr2) { %><br /><% } %>
@@ -105,22 +104,6 @@
                         <% }) %>
                         </ul>
                     <% } %>
-=======
-                    <div class="locations-address">
-                        <%= name %><br />
-                        <%= addr1 %><br />
-                        <%= addr2 %><% if(addr2) { %><br /><% } %>
-                        <%= city %>, <%= state %> <%= zip %>
-                        <a href="#" class="locations-directions">Directions</a>
-                        <% if (categories.length > 0) { %>
-                            <ul>
-                            <% _.each(categories, function(category) { %>
-                                <li><%= category.name %></li>
-                            <% }) %>
-                            </ul>
-                        <% } %>
-                    </div>
->>>>>>> b314aae54d6dce5aaa0a4443723b1397573a9ea9
                 </td>
                 <td><%= phone %></td>
                 <td><%= hours %></td>
@@ -128,7 +111,6 @@
             </tr>
         </script>
 
-<<<<<<< HEAD
         <script type="text/template" id="-tmpl-locations-infowindow">
             <div>
                 <%= addr1 %><br />
@@ -137,8 +119,6 @@
                 <a class="directions" href="javascript:void(0);">Directions</a>
             </div>
         </script>
-=======
->>>>>>> b314aae54d6dce5aaa0a4443723b1397573a9ea9
         <!-- end templates -->
     </body>
 </html>
