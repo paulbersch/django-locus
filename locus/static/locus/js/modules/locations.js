@@ -15,6 +15,7 @@ define([
             // ensure there's a trailing slash
             var temp_url = Backbone.Model.prototype.url.call(this);
             return (temp_url.charAt(temp_url.length - 1) == '/' ? temp_url : temp_url+'/');
+<<<<<<< HEAD
         },
         address: function() {
             var addr = _.template("<%= addr1 %> <%= addr2 %> <%= city %>, <%= state %> <%= zip %> <%= country %>");
@@ -30,6 +31,8 @@ define([
                 destination: escape(this.address())
             }));
             return true;
+=======
+>>>>>>> b314aae54d6dce5aaa0a4443723b1397573a9ea9
         }
     });
 
@@ -101,7 +104,12 @@ define([
         initialize: function(map) {
             templates.list = _.template($('#-tmpl-locations-list').html());
             templates.list_item = _.template($('#-tmpl-locations-list-item').html());
+<<<<<<< HEAD
             templates.infowindow_content = _.template($('#-tmpl-locations-infowindow').html());
+=======
+            templates.directions_url = _.template("http://maps.google.com/maps?f=d&source=s_d&saddr=<%= start %>&daddr=<%= destination %>");
+            templates.formatted_address = _.template("<%= addr1 %><% if(addr2) { %> <%= addr2 %><% } %> <%= city %>, <%= state %> <%= zip %> <%= country %>");
+>>>>>>> b314aae54d6dce5aaa0a4443723b1397573a9ea9
 
             this.map = map;
 
@@ -171,9 +179,22 @@ define([
             }
 
             this.collection.each(function(loc, index) {
+<<<<<<< HEAD
                 // create a map marker
                 var list_item = $(templates.list_item(loc.attributes));
                 var infowindow_content = $(templates.infowindow_content(loc.attributes));
+=======
+                var open_directions = function() {
+                        var start = escape($('#locus-address-search input[name=address]').val());
+                        var end = escape(templates.formatted_address(loc.attributes));
+                        window.open(templates.directions_url({ 'start': start, 'destination': end }));
+                        return false;
+                }
+
+                // create a map marker
+                var list_item = $(templates.list_item(loc.attributes));
+                $('.locations-directions', list_item).on('click', open_directions);
+>>>>>>> b314aae54d6dce5aaa0a4443723b1397573a9ea9
 
                 var marker = new google.maps.Marker({
                     //animation: google.maps.Animation.DROP,
@@ -184,16 +205,26 @@ define([
                 // for debug
                 var open_info_window = _.bind(function() {
                     this.infoWindow.close();
+<<<<<<< HEAD
                     this.infoWindow.setContent(infowindow_content.get(0));
                     // don't anchor to a marker, as it may get redrawn
                     this.infoWindow.setPosition(marker.getPosition());
                     this.infoWindow.open(this.map);
                     $('.directions', infowindow_content).on('click', _.bind(loc.directions, loc));
+=======
+                    this.infoWindow.setContent($('.locations-address', list_item).clone(true, true).get(0));
+                    // don't anchor to a marker, as it may get redrawn
+                    this.infoWindow.setPosition(marker.getPosition());
+                    this.infoWindow.open(this.map);
+>>>>>>> b314aae54d6dce5aaa0a4443723b1397573a9ea9
                 }, this); // why does _.bind always feel like an antipattern...
 
                 google.maps.event.addListener(marker, 'click', open_info_window);
                 $('td', list_item).on('click', open_info_window);
+<<<<<<< HEAD
                 $('.directions', list_item).on('click', _.bind(loc.directions, loc));
+=======
+>>>>>>> b314aae54d6dce5aaa0a4443723b1397573a9ea9
 
                 locations_table.append(list_item);
 
