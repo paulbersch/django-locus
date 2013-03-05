@@ -96,7 +96,7 @@
                     <%= addr1 %><br />
                     <%= addr2 %><% if(addr2) { %><br /><% } %>
                     <%= city %>, <%= state %> <%= zip %>
-                    <a href="javascript:void(0);">Directions</a>
+                    <a class="directions" href="javascript:void(0);">Directions</a>
                     <% if (categories.length > 0) { %>
                         <ul>
                         <% _.each(categories, function(category) { %>
@@ -116,7 +116,7 @@
                 <%= addr1 %><br />
                 <%= addr2 %><% if(addr2) { %><br /><% } %>
                 <%= city %>, <%= state %> <%= zip %>
-                <a href="javascript:void(0);">Directions</a>
+                <a class="directions" href="javascript:void(0);">Directions</a>
             </div>
         </script>
         <!-- end templates -->

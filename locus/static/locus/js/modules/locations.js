@@ -15,6 +15,21 @@ define([
             // ensure there's a trailing slash
             var temp_url = Backbone.Model.prototype.url.call(this);
             return (temp_url.charAt(temp_url.length - 1) == '/' ? temp_url : temp_url+'/');
+        },
+        address: function() {
+            var addr = _.template("<%= addr1 %> <%= addr2 %> <%= city %>, <%= state %> <%= zip %> <%= country %>");
+            return addr(this.attributes);
+        },
+        directions: function() {
+            var tmpl_url = _.template('http://maps.google.com/maps?f=d&source=s_d&saddr=<%= address %>&daddr=<%= destination %>');
+
+            console.log(this);
+
+            window.open(tmpl_url({
+                address: escape($('input[name=address]').val()),
+                destination: escape(this.address())
+            }));
+            return true;
         }
     });
 
@@ -169,14 +184,16 @@ define([
                 // for debug
                 var open_info_window = _.bind(function() {
                     this.infoWindow.close();
-                    this.infoWindow.setContent(infowindow_content.html());
+                    this.infoWindow.setContent(infowindow_content.get(0));
                     // don't anchor to a marker, as it may get redrawn
                     this.infoWindow.setPosition(marker.getPosition());
                     this.infoWindow.open(this.map);
+                    $('.directions', infowindow_content).on('click', _.bind(loc.directions, loc));
                 }, this); // why does _.bind always feel like an antipattern...
 
                 google.maps.event.addListener(marker, 'click', open_info_window);
                 $('td', list_item).on('click', open_info_window);
+                $('.directions', list_item).on('click', _.bind(loc.directions, loc));
 
                 locations_table.append(list_item);
 
