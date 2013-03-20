@@ -6,7 +6,6 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from locus.models import Location, Category
-from django.utils.simplejson.encoder import JSONEncoder
 from random import random as randomfloat
 from locus.utils.location import calcDistance, milesBox, revLookup
 from django.db.models import Q
